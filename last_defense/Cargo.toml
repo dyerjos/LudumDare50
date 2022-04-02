@@ -9,7 +9,7 @@ description = """
 Game submission for Ludum Dare 50. Defend your city from invaders.
 """
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
-bevy = { version = "0.6.1", features = ["dynamic"] }
+bevy = "0.6.1"
+
+# [dev-dependencies]
