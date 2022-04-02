@@ -11,5 +11,6 @@ Game submission for Ludum Dare 50. Defend your city from invaders.
 
 [dependencies]
 bevy = "0.6.1"
+bevy-inspector-egui = "0.9.0"
 
 # [dev-dependencies]

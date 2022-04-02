@@ -5,6 +5,7 @@ use bevy::{
     // diagnostic::EntityCountDiagnosticsPlugin,
     prelude::*,
 };
+use bevy_inspector_egui::WorldInspectorPlugin;
 
 mod players;
 
@@ -20,6 +21,7 @@ fn main() {
         // .add_plugin(FrameTimeDiagnosticsPlugin::default())
         // .add_plugin(LogDiagnosticsPlugin::default())
         // .add_plugin(EntityCountDiagnosticsPlugin::default())
+        .add_plugin(WorldInspectorPlugin::new())
         .add_startup_system(setup)
         .add_startup_system(players::spawn_player)
         .add_system_set(
