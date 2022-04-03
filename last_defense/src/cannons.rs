@@ -5,6 +5,7 @@ use bevy::{
 };
 
 use crate::TIME_STEP;
+use crate::DEBUG_MODE;
 
 #[derive(Component)]
 pub struct Cannon{
