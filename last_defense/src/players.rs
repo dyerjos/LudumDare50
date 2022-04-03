@@ -3,7 +3,6 @@ use bevy::{
     // sprite::collide_aabb::{collide, Collision},
     prelude::*,
 };
-use bevy_inspector_egui::Inspectable;
 
 use crate::TIME_STEP;
 // use crate::DEBUG_MODE;
@@ -13,19 +12,13 @@ pub struct Player{
     speed: f32,
 }
 
-#[derive(Inspectable, Default)]
-pub struct PlayerData {
-    player: Option<Entity>,
-}
-
 pub fn spawn_player(
     mut commands: Commands,
-    mut player_data: ResMut<PlayerData>,
 ) {
     let player = commands
         .spawn_bundle(SpriteBundle {
             transform: Transform {
-                translation: Vec3::new(0.0, -205.0, 0.0),
+                translation: Vec3::new(0.0, -205.0, 2.0),
                 scale: Vec3::new(10.0, 5.0, 0.0),
                 ..Default::default()
             },
@@ -37,8 +30,6 @@ pub fn spawn_player(
         })
         .insert(Player { speed: 100.0})
         .id();
-    player_data.player = Some(player);
-
 }
 
 pub fn move_player(

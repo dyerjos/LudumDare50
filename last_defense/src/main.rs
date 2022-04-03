@@ -8,8 +8,8 @@ use bevy::{
 
 const DEBUG_MODE: bool = cfg!(debug_assertions);
 
-#[cfg(debug_assertions)]
-use bevy_inspector_egui::InspectorPlugin;
+// #[cfg(debug_assertions)]
+// use bevy_inspector_egui::InspectorPlugin;
 
 #[cfg(debug_assertions)]
 use bevy_inspector_egui::WorldInspectorPlugin;
@@ -19,13 +19,16 @@ mod players;
 mod walls;
 mod cannons;
 mod cities;
+mod scores;
 
 
-// #[derive(Default)]
-// struct GameState {
-//     current_round: usize,
-//     winning_player: Option<String>,
-// }
+#[derive(Default)]
+pub struct GameState {
+    // current_round: usize,
+    // winning_player: Option<String>,
+    elapsed_time: f64,
+    number_of_cannons: u16,
+}
 
 
 const TIME_STEP: f32 = 1.0 / 60.0;
@@ -40,6 +43,7 @@ fn main() {
                 resizable: DEBUG_MODE,
                 ..Default::default()
             })
+            .insert_resource(GameState { number_of_cannons: 0 , elapsed_time: 0.})
             .insert_resource(ClearColor(Color::rgb(0.53, 0.53, 0.53)))
             .insert_resource(bevy::log::LogSettings {
                 level: bevy::log::Level::INFO,
@@ -59,10 +63,10 @@ fn main() {
                 SystemSet::new()
                     .with_run_criteria(FixedTimestep::step(TIME_STEP as f64))
                     .with_system(players::move_player)
-                    .with_system(cannons::move_cannons)
+                    .with_system(cannons::cannon_system)
+                    .with_system(scores::score_system)
             )
-            .add_plugin(InspectorPlugin::<players::PlayerData>::new())
-            .add_system_set(
+            .add_system_set( //* spawn more cannons */
                 SystemSet::new()
                     .with_run_criteria(FixedTimestep::step(20.0))
                     .with_system(cannons::spawn_cannon)
@@ -70,34 +74,37 @@ fn main() {
             .add_system(bevy::input::system::exit_on_esc_system)
             .run();
     } else {
-        App::new()
-            .insert_resource(WindowDescriptor {
-                title: "Last Defender".to_string(),
-                width: 1024.,
-                height: 576.,
-                vsync: true,
-                resizable: false,
-                ..Default::default()
-            })
-            .insert_resource(ClearColor(Color::rgb(0.53, 0.53, 0.53)))
-            .add_plugins(DefaultPlugins)
-            .add_startup_system(setup)
-            .add_startup_system(players::spawn_player)
-            .add_startup_system(walls::spawn_walls)
-            .add_startup_system(cannons::spawn_cannon)
-            .add_system_set(
-                SystemSet::new()
-                    .with_run_criteria(FixedTimestep::step(TIME_STEP as f64))
-                    .with_system(players::move_player)
-                    .with_system(cannons::move_cannons)
-            )
-            .add_system_set(
-                SystemSet::new()
-                    .with_run_criteria(FixedTimestep::step(20.0))
-                    .with_system(cannons::spawn_cannon)
-            )
-            .add_system(bevy::input::system::exit_on_esc_system)
-            .run();
+        info!("set me up for production")
+        // App::new()
+        //     .insert_resource(WindowDescriptor {
+        //         title: "Last Defender".to_string(),
+        //         width: 1024.,
+        //         height: 576.,
+        //         vsync: true,
+        //         resizable: false,
+        //         ..Default::default()
+        //     })
+        //     .insert_resource(GameState { number_of_cannons: 0 , elapsed_time: 0.})
+        //     .insert_resource(ClearColor(Color::rgb(0.53, 0.53, 0.53)))
+        //     .add_plugins(DefaultPlugins)
+        //     .add_startup_system(setup)
+        //     .add_startup_system(players::spawn_player)
+        //     .add_startup_system(walls::spawn_walls)
+        //     .add_startup_system(cannons::spawn_cannon)
+        //     .add_system_set(
+        //         SystemSet::new()
+        //             .with_run_criteria(FixedTimestep::step(TIME_STEP as f64))
+        //             .with_system(players::move_player)
+        //             .with_system(cannons::cannon_system)
+        //             .with_system(scores::score_system)
+        //     )
+        //     .add_system_set(
+        //         SystemSet::new()
+        //             .with_run_criteria(FixedTimestep::step(20.0))
+        //             .with_system(cannons::spawn_cannon)
+        //     )
+        //     .add_system(bevy::input::system::exit_on_esc_system)
+        //     .run();
     }
 }
 
