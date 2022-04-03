@@ -14,9 +14,19 @@ use bevy_inspector_egui::InspectorPlugin;
 #[cfg(debug_assertions)]
 use bevy_inspector_egui::WorldInspectorPlugin;
 
+mod settings;
 mod players;
 mod walls;
 mod cannons;
+mod cities;
+
+
+#[derive(Default)]
+struct GameState {
+    current_round: usize,
+    winning_player: Option<String>,
+}
+
 
 const TIME_STEP: f32 = 1.0 / 60.0;
 fn main() {
@@ -44,6 +54,7 @@ fn main() {
             .add_startup_system(players::spawn_player)
             .add_startup_system(walls::spawn_walls)
             .add_startup_system(cannons::spawn_cannon)
+            .add_startup_system(cities::spawn_cities)
             .add_system_set(
                 SystemSet::new()
                     .with_run_criteria(FixedTimestep::step(TIME_STEP as f64))

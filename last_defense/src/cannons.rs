@@ -5,7 +5,7 @@ use bevy::{
 };
 
 use crate::TIME_STEP;
-use crate::DEBUG_MODE;
+// use crate::DEBUG_MODE;
 
 #[derive(Component)]
 pub struct Cannon{
@@ -27,7 +27,7 @@ pub fn spawn_cannon(
         material: materials.add(ColorMaterial::from(Color::BLACK)),
         ..Default::default()
     })
-    .insert(Cannon {speed: 5.});
+    .insert(Cannon {speed: 2.});
 }
 
 // pub fn launch_cannon(

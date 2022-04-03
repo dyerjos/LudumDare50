@@ -6,7 +6,7 @@ use bevy::{
 use bevy_inspector_egui::Inspectable;
 
 use crate::TIME_STEP;
-use crate::DEBUG_MODE;
+// use crate::DEBUG_MODE;
 
 #[derive(Component)]
 pub struct Player{

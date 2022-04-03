@@ -3,7 +3,7 @@ use bevy::{
     prelude::*,
 };
 
-use crate::DEBUG_MODE;
+// use crate::DEBUG_MODE;
 
 #[derive(Component)]
 enum Collider {
