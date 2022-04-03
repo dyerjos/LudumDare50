@@ -6,17 +6,24 @@ use bevy::{
 
 use crate::TIME_STEP;
 // use crate::DEBUG_MODE;
+// use crate::GameState;
 
 #[derive(Component)]
 pub struct Cannon{
     speed: f32,
 }
 
+
+// pub struct CannonBall {
+//     velocity: Vec3,
+// }
+
 pub fn spawn_cannon(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
+    info!("spawning cannon");
     commands.spawn_bundle(MaterialMesh2dBundle {
         mesh: meshes.add(Mesh::from(shape::Box::default())).into(),
         transform: Transform {
@@ -37,15 +44,16 @@ pub fn spawn_cannon(
 //     info!("launching cannon!")
 // }
 
-pub fn move_cannon(
+pub fn move_cannons(
     mut query: Query<(&Cannon, &mut Transform)>
 ) {
-    let (cannon, mut transform) = query.single_mut();
+    for (cannon, mut transform) in query.iter_mut() {
+        let translation = &mut transform.translation;
+        translation.x += -1. * cannon.speed * TIME_STEP;
 
-    let translation = &mut transform.translation;
-    // move the paddle horizontally
-    translation.x += -1. * cannon.speed * TIME_STEP;
+        // * barrel rotation
+        // transform.rotation = Quat::from_rotation_z(angle);
+    }
+    // let (cannon, mut transform) = query.single_mut();
 
-    // * barrel rotation
-    // transform.rotation = Quat::from_rotation_z(angle);
 }

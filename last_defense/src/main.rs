@@ -21,11 +21,11 @@ mod cannons;
 mod cities;
 
 
-#[derive(Default)]
-struct GameState {
-    current_round: usize,
-    winning_player: Option<String>,
-}
+// #[derive(Default)]
+// struct GameState {
+//     current_round: usize,
+//     winning_player: Option<String>,
+// }
 
 
 const TIME_STEP: f32 = 1.0 / 60.0;
@@ -59,9 +59,15 @@ fn main() {
                 SystemSet::new()
                     .with_run_criteria(FixedTimestep::step(TIME_STEP as f64))
                     .with_system(players::move_player)
-                    .with_system(cannons::move_cannon)
+                    .with_system(cannons::move_cannons)
             )
             .add_plugin(InspectorPlugin::<players::PlayerData>::new())
+            .add_system_set(
+                SystemSet::new()
+                    .with_run_criteria(FixedTimestep::step(20.0))
+                    .with_system(cannons::spawn_cannon)
+            )
+            .add_system(bevy::input::system::exit_on_esc_system)
             .run();
     } else {
         App::new()
@@ -83,8 +89,14 @@ fn main() {
                 SystemSet::new()
                     .with_run_criteria(FixedTimestep::step(TIME_STEP as f64))
                     .with_system(players::move_player)
-                    .with_system(cannons::move_cannon)
+                    .with_system(cannons::move_cannons)
             )
+            .add_system_set(
+                SystemSet::new()
+                    .with_run_criteria(FixedTimestep::step(20.0))
+                    .with_system(cannons::spawn_cannon)
+            )
+            .add_system(bevy::input::system::exit_on_esc_system)
             .run();
     }
 }
