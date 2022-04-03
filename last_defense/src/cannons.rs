@@ -1,6 +1,6 @@
-
 use bevy::{
     sprite::MaterialMesh2dBundle,
+    // math::{Quat, Vec2},
     prelude::*,
 };
 
@@ -45,4 +45,7 @@ pub fn move_cannon(
     let translation = &mut transform.translation;
     // move the paddle horizontally
     translation.x += -1. * cannon.speed * TIME_STEP;
+
+    // * barrel rotation
+    // transform.rotation = Quat::from_rotation_z(angle);
 }

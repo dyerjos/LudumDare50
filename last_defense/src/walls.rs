@@ -17,8 +17,6 @@ pub struct Wall;
 
 pub fn spawn_walls(
     mut commands: Commands,
-    // mut meshes: ResMut<Assets<Mesh>>,
-    // mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
     let wall_color = Color::rgb(0.8, 0.8, 0.8);
     let wall_thickness= 10.0;
