@@ -5,6 +5,7 @@ use bevy::{
     // diagnostic::EntityCountDiagnosticsPlugin,
     prelude::*,
 };
+use bevy_rapier2d::prelude::*;
 
 const DEBUG_MODE: bool = cfg!(debug_assertions);
 
@@ -54,6 +55,8 @@ fn main() {
             // .add_plugin(LogDiagnosticsPlugin::default())
             // .add_plugin(EntityCountDiagnosticsPlugin::default())
             .add_plugin(WorldInspectorPlugin::new())
+            .add_plugin(RapierPhysicsPlugin::<NoUserData>::default())
+            .add_plugin(RapierRenderPlugin)
             .add_startup_system(setup)
             .add_startup_system(players::spawn_player)
             .add_startup_system(walls::spawn_walls)

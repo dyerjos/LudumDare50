@@ -1,8 +1,10 @@
 use bevy::{
     sprite::MaterialMesh2dBundle,
-    // math::{Quat, Vec2},
+    prelude::shape::Box,
+    prelude::shape::Icosphere,
     prelude::*,
 };
+use bevy_rapier2d::prelude::*;
 
 use crate::TIME_STEP;
 // use crate::DEBUG_MODE;
@@ -32,6 +34,11 @@ pub struct CannonBall {
     velocity: Vec3,
 }
 
+#[derive(Bundle)]
+pub struct CannonBallBundle {
+
+}
+
 pub fn spawn_cannon(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
@@ -43,7 +50,7 @@ pub fn spawn_cannon(
 
     // * cannon body
     commands.spawn_bundle(MaterialMesh2dBundle {
-        mesh: meshes.add(Mesh::from(shape::Box::default())).into(),
+        mesh: meshes.add(Mesh::from(Box::default())).into(),
         transform: Transform {
             translation: Vec3::new(385.0, -205.0, 0.0),
             scale: Vec3::new(10.0, 5.0, 0.0),
@@ -59,7 +66,7 @@ pub fn spawn_cannon(
 
     // * rotating cannon barrel
     commands.spawn_bundle(MaterialMesh2dBundle {
-        mesh: meshes.add(Mesh::from(shape::Box::default())).into(),
+        mesh: meshes.add(Mesh::from(Box::default())).into(),
         transform: Transform {
             translation: Vec3::new(385.0, -200.0, 0.0),
             rotation: Quat::from_rotation_z(0.0),
@@ -85,6 +92,7 @@ pub fn cannon_system(
     mut cannonball_query: Query<(&mut CannonBall, &mut Transform), (Without<Cannon>, Without<Barrel>)>,
     mut barrel_query: Query<(&mut Barrel, &mut Transform), (Without<Cannon>, Without<CannonBall>)>,
     game_state: Res<GameState>,
+    mut rigid_bodies: Query<(&mut RigidBodyForcesComponent, &mut RigidBodyVelocityComponent, &RigidBodyMassPropsComponent)>
 ) {
     for (cannon, mut transform) in cannon_query.iter_mut() {
         // * move selected cannon
@@ -116,9 +124,17 @@ pub fn cannon_system(
             // let base_pos = transform.with_rotation(-transform.rotation);
             // let angle = (barrel_pos - base_pos).angle_between(base_pos);
 
-            commands
-                .spawn_bundle(MaterialMesh2dBundle {
-                    mesh: meshes.add(Mesh::from(shape::Icosphere::default())).into(),
+            let collider = ColliderBundle {
+                shape: ColliderShape::ball(0.5).into(),
+                mass_properties: ColliderMassProps::Density(200.0).into(),
+                material: ColliderMaterial {
+                    restitution: 0.7,
+                    ..Default::default()
+                }.into(),
+                ..Default::default()
+            };
+            let sprite = MaterialMesh2dBundle {
+                    mesh: meshes.add(Mesh::from(Icosphere::default())).into(),
                     transform: Transform {
                         translation: transform.translation,
                         scale: Vec3::new(5.0, 5.0, 0.0),
@@ -126,23 +142,47 @@ pub fn cannon_system(
                     },
                     material: materials.add(ColorMaterial::from(Color::ORANGE)),
                     ..Default::default()
-                })
-                .insert(CannonBall {
-                    velocity: -50.0 * transform.translation.normalize()
-                });
+                };
+
+
+            commands
+                .spawn_bundle(RigidBodyBundle {
+                position: Vec2::new(0.0, 10.0).into(),
+                forces: RigidBodyForces {
+                    force: Vec2::new(1000.0, 1000.0).into(),
+                    torque: 140.0,
+                    // gravity_scale: 2.0,
+                    ..Default::default()
+                }.into(),
+                ..Default::default()
+            })
+            .insert_bundle(sprite)
+            .insert_bundle(collider)
+            .insert(CannonBall {
+                velocity: -50.0 * transform.translation.normalize()
+            });
 
             barrel.time_last_fired = game_state.elapsed_time;
         }
     }
 
 
-    for (cannonball, mut transform) in cannonball_query.iter_mut() {
+    for (mut rb_forces, mut rb_vel, rb_mprops) in rigid_bodies.iter_mut() {
+        // Apply forces.
+        rb_forces.force = Vec2::new(1.0, 2.0).into();
+        rb_forces.torque = 0.4;
 
-        transform.translation += cannonball.velocity * TIME_STEP;
+        // Apply impulses.
+        rb_vel.apply_impulse(rb_mprops, Vec2::new(100.0, 200.0).into());
+        rb_vel.apply_torque_impulse(rb_mprops, 80.0);
     }
 
-}
+    // for (mut cannonball, mut transform) in cannonball_query.iter_mut() {
+    //     cannonball.force
+    //      transform.translation += cannonball.velocity * TIME_STEP;
 
-// pub fn firing_solution(distance: f32, ) {
-//     info!("figure this out yo")
-// }
+    // }
+
+
+
+}
